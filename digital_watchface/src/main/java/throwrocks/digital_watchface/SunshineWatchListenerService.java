@@ -96,13 +96,19 @@ public class SunshineWatchListenerService extends WearableListenerService
                 // Get the data map items
                 String sunshine_temperature_high = dataMap.getString("sunshine_temperature_high");
                 String sunshine_temperature_low = dataMap.getString("sunshine_temperature_low");
+                String  sunshine_temperature_description = dataMap.get("sunshine_temperature_description");
+                int sunshine_weather_id = dataMap.get("sunshine_weather_id");
                 Long sunshine_time_millis = dataMap.getLong("sunshine_time_millis");
+
                 Log.i(LOG_TAG, "Temperature: " + sunshine_temperature_high + ", " + sunshine_temperature_low);
+                Log.i(LOG_TAG, "Weather id: " + sunshine_weather_id);
 
                 // Create intent and broadcast it
                 Intent send_weather = new Intent("ACTION_WEATHER_CHANGED");
                 send_weather.putExtra("sunshine_temperature_high", sunshine_temperature_high);
                 send_weather.putExtra("sunshine_temperature_low", sunshine_temperature_low);
+                send_weather.putExtra("sunshine_temperature_description", sunshine_temperature_description);
+                send_weather.putExtra("sunshine_weather_id", sunshine_weather_id);
                 send_weather.putExtra("sunshine_time_millis", sunshine_time_millis);
                 sendBroadcast(send_weather);
 

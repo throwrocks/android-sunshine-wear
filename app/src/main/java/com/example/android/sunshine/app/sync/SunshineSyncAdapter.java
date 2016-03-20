@@ -146,7 +146,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             putDataMapReq.getDataMap().putString("sunshine_temperature_description", description);
             putDataMapReq.getDataMap().putInt("sunshine_weather_id", weather_id);
             putDataMapReq.getDataMap().putLong("sunshine_time_millis", System.currentTimeMillis());
-            Log.i(LOG_TAG, "High and low: " + watch_high  + ", " + watch_low);
+            Log.i(LOG_TAG, "High and low: " + watch_high + ", " + watch_low);
+            Log.i(LOG_TAG, "Weather id: " + weather_id);
             // Pass data map to the watch
             PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
             PendingResult<DataApi.DataItemResult> pendingResult =

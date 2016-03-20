@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -100,9 +102,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         // Jose: declared the weather paint objects
         Paint mWeatherHighPaint;
         Paint mWeatherLowPaint;
+        Paint mWeatherDescriptionPaint;
 
-
-        Paint mWeatherPaint;
 
         boolean mAmbient;
 
@@ -125,6 +126,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         String weather_temperature_high = "";
         String weather_temperature_low = "";
         String weather_description = "";
+        Bitmap weatherIcon;
         int weather_id;
 
 
@@ -137,7 +139,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 Log.i(LOG_TAG, "onReceive - Weather Receiver");
                 weather_temperature_high = intent.getStringExtra("sunshine_temperature_high");
                 weather_temperature_low = intent.getStringExtra("sunshine_temperature_low");
-                weather_description = intent.getStringExtra("sunshine_weather_description");
+                weather_description = intent.getStringExtra("sunshine_temperature_description");
                 weather_id = intent.getIntExtra("sunshine_weather_id", 0);
                 Log.i(LOG_TAG, weather_temperature_high + ", " + weather_temperature_low);
             }
@@ -172,10 +174,14 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
             // Jose: Create the weather Paint objects
             mWeatherLowPaint = new Paint();
-            mWeatherLowPaint = createTextPaint(resources.getColor(R.color.digital_text));
+            mWeatherLowPaint = createTextPaint(resources.getColor(R.color.weather_low_text));
 
             mWeatherHighPaint = new Paint();
             mWeatherHighPaint = createTextPaint(resources.getColor(R.color.digital_text));
+
+            mWeatherDescriptionPaint = new Paint();
+            mWeatherDescriptionPaint = createTextPaint(resources.getColor(R.color.weather_description_text));
+
 
 
 
@@ -257,9 +263,13 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             float weatherLowTextSize = resources.getDimension(isRound
                     ? R.dimen.digital_weather_low_text_size_round : R.dimen.digital_weather_low_text_size);
 
+            float weatherDescriptionTextSize = resources.getDimension(isRound
+                    ? R.dimen.digital_weather_description_text_size_round : R.dimen.digital_weather_description_text_size);
+
             mTimePaint.setTextSize(textSize);
             mWeatherHighPaint.setTextSize(weatherHighTextSize);
             mWeatherLowPaint.setTextSize(weatherLowTextSize);
+            mWeatherDescriptionPaint.setTextSize(weatherDescriptionTextSize);
         }
 
         @Override
@@ -318,6 +328,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
+
             // Draw the background.
             if (isInAmbientMode()) {
                 canvas.drawColor(Color.BLACK);
@@ -342,23 +353,54 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 e.printStackTrace();
             }
 
-            // Jose: Calculate the XOffset to center the time and temperatures
+            // Jose: Set variables to center all objects relative to each other
+            float mTimeHeight = mTimePaint.getTextSize();
             float mTimeXCenter = bounds.centerX() - mTimePaint.measureText(text) / 2;
 
+            // Measure the temperature texts and pad them
             float mWeatherHighMeasure = mWeatherHighPaint.measureText(weather_temperature_high) + 4;
             float mWeatherLowMeasure = mWeatherLowPaint.measureText(weather_temperature_low) + 4;
+            // The total temperature text size
             float mWeatherMeasure = mWeatherHighMeasure + mWeatherLowMeasure;
+            // The temperature height
+            float mWeatherHeight = mWeatherHighPaint.getTextSize();
 
+            // The description measure
+            float mWeatherDescriptionMeasure = mWeatherDescriptionPaint.measureText(weather_description);
+
+            // The relative x offsets
             float mWeatherHighXCenter = bounds.centerX() - mWeatherMeasure / 2;
             float mWeatherLowXCenter = bounds.centerX() - mWeatherMeasure / 2 + mWeatherHighMeasure;
+            float mWeatherIconXCenter = 0;
+            float mWeatherDescriptionXCenter =  bounds.centerX() - mWeatherDescriptionMeasure / 2 ;
 
-            canvas.drawText(text, mTimeXCenter , mYOffset, mTimePaint);
-
-            // Draw the temperature
-            canvas.drawText(weather_temperature_high, mWeatherHighXCenter, mYOffset + 60, mWeatherHighPaint);
-            canvas.drawText(weather_temperature_low, mWeatherLowXCenter, mYOffset + 60, mWeatherLowPaint);
+            // The relative y offsets
+            float mWeatherTemperatureYOffset = mYOffset + mTimeHeight;
+            float mWeatherTemperatureDisplayYOffset = mYOffset + mTimeHeight + mWeatherHeight;
 
 
+            // Jose: Get the weather icon's drawable id
+
+            int mWeatherIcon = SunshineWatchGetWeatherIcon.getIconResourceForWeatherCondition(weather_id);
+            if ( mWeatherIcon != -1 ) {
+                weatherIcon = BitmapFactory.decodeResource(getResources(), mWeatherIcon);
+                mWeatherIconXCenter = bounds.centerX() - weatherIcon.getWidth() / 2;
+            }
+
+            Log.d(LOG_TAG, "weather_id: " + Integer.toString(weather_id));
+            Log.d(LOG_TAG, "weathericon: " + Integer.toString(mWeatherIcon));
+
+            canvas.drawText(text, mTimeXCenter, mYOffset, mTimePaint);
+
+            // Jose: Draw the temperature
+            canvas.drawText(weather_temperature_high, mWeatherHighXCenter, mWeatherTemperatureYOffset, mWeatherHighPaint);
+            canvas.drawText(weather_temperature_low, mWeatherLowXCenter,mWeatherTemperatureYOffset, mWeatherLowPaint);
+            canvas.drawText(weather_description, mWeatherDescriptionXCenter, mWeatherTemperatureDisplayYOffset , mWeatherDescriptionPaint);
+
+            // Jose: Draw the weather icon
+            if ( mWeatherIcon != -1 && mWeatherIconXCenter != 0) {
+                canvas.drawBitmap(weatherIcon, mWeatherIconXCenter, mWeatherTemperatureDisplayYOffset, mTimePaint);
+            }
 
         }
 
