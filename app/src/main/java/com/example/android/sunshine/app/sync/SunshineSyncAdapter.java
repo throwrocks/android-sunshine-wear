@@ -133,6 +133,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         if (cursor != null && cursor.moveToFirst()) {
             double high = cursor.getDouble(INDEX_MAX_TEMP);
             double low = cursor.getDouble(INDEX_MIN_TEMP);
+            String description = cursor.getString(INDEX_SHORT_DESC);
+            int weather_id = cursor.getInt(INDEX_WEATHER_ID);
             // Format the temperature for the watch
             String watch_high = Utility.formatTemperature(getContext(), high);
             String watch_low = Utility.formatTemperature(getContext(), low);
@@ -141,6 +143,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sunshine_data");
             putDataMapReq.getDataMap().putString("sunshine_temperature_high", watch_high);
             putDataMapReq.getDataMap().putString("sunshine_temperature_low", watch_low);
+            putDataMapReq.getDataMap().putString("sunshine_temperature_description", description);
+            putDataMapReq.getDataMap().putInt("sunshine_weather_id", weather_id);
             putDataMapReq.getDataMap().putLong("sunshine_time_millis", System.currentTimeMillis());
             Log.i(LOG_TAG, "High and low: " + watch_high  + ", " + watch_low);
             // Pass data map to the watch
