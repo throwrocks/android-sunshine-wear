@@ -67,7 +67,7 @@ import java.util.concurrent.ExecutionException;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener {
-    public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
+    public static String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
     public static final String ACTION_DATA_UPDATED =
             "com.example.android.sunshine.app.ACTION_DATA_UPDATED";
     // Interval at which to sync with the weather, in seconds.
@@ -119,7 +119,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     public void onDataChanged(DataEventBuffer dataEvents) {
         Log.v(LOG_TAG, "onDataChanged");
 
+
     }
+
     /**
      * Jose: This method creates the data map and passes it to the watch
      * updateWatch method
@@ -695,7 +697,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
              * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
              * here.
              */
-
+            Log.v(LOG_TAG, "onAccountCreated");
             onAccountCreated(newAccount, context);
         }
         return newAccount;
@@ -706,6 +708,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
          * Since we've created an account
          */
         SunshineSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+        Log.v(LOG_TAG, "Interval " + SYNC_INTERVAL);
+
 
         /*
          * Without calling setSyncAutomatically, our periodic sync will not be enabled.
@@ -719,7 +723,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     }
 
     public static void initializeSyncAdapter(Context context) {
+        Log.v(LOG_TAG, "initializeSynAdapter");
         getSyncAccount(context);
+
     }
 
     /**
