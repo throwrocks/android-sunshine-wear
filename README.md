@@ -9,5 +9,4 @@ To use, add a gradle.properties file with your API key:
 MyOpenWeatherMapApiKey = ""
 
 ![ScreenShot](http://throw.rocks/android-projects/sunshine-watch-face/huawei-watch.jpg)
-
 ![ScreenShot](http://throw.rocks/android-projects/sunshine-watch-face/watch-face.png)
