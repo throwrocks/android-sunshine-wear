@@ -8,5 +8,5 @@ The weather information is sent from the Sunshine app's SyncAdapter to the Weath
 To use, add a gradle.properties file with your API key:
 MyOpenWeatherMapApiKey = ""
 
-![ScreenShot](http://throw.rocks/android-projects/sunshine-watch-face/huawei-watch.jpg)
-![ScreenShot](http://throw.rocks/android-projects/sunshine-watch-face/watch-face.png)
+![ScreenShot](https://github.com/throwrocks/android-project-images/blob/master/sunshine-watch-face/huawei-watch.jpg)
+![ScreenShot](https://github.com/throwrocks/android-project-images/blob/master/sunshine-watch-face/watch-face.png)
